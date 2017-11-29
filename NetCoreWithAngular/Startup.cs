@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace NetCoreWithAngular
 {
@@ -24,6 +25,13 @@ namespace NetCoreWithAngular
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            // Add Cors
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,7 +41,10 @@ namespace NetCoreWithAngular
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            // Enable Cors
+            app.UseCors("MyPolicy");
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }
